@@ -27,9 +27,16 @@ class Pinata
         return $this->doCall('/pinning/addHashToPinQueue', 'POST', ['hashToPin' => $hashToPin]);
     }
 
-    function pinFileToIPFS($file): array
+    function pinFileToIPFS(string $filePath, array $metadata = null): array
     {
-        return $this->doCall('/pinning/pinFileToIPFS', 'POST');
+        return json_decode($this->client->post('/pinning/pinFileToIPFS', [
+            'multipart' => [
+                [
+                    'name'     => 'file',
+                    'contents' => fopen($filePath, 'r')
+                ],
+            ]
+        ])->getBody()->getContents(), true);
     }
 
     function pinHashToIPFS(string $hashToPin): array
@@ -39,12 +46,13 @@ class Pinata
 
     function pinJobs(): array
     {
-        return json_encode($this->client->get('/pinning/pinJobs')->getBody()->getContents(), true);
+        return json_decode($this->client->get('/pinning/pinJobs')->getBody()->getContents(), true);
     }
 
-    function pinJSONToIPFS(array $json): array
+    function pinJSONToIPFS(array $json, array $metadata = null): array
     {
-        return $this->doCall('/pinning/pinJSONToIPFS', 'POST', $json);
+        $content = ($metadata) ? ['pinataMetadata' => $metadata, 'pinataContent' => $json] : $json;
+        return $this->doCall('/pinning/pinJSONToIPFS', 'POST', $content);
     }
 
     function removePinFromIPFS(string $hash): bool
@@ -58,12 +66,12 @@ class Pinata
 
     function userPinnedDataTotal(): array
     {
-        return json_encode($this->client->get('/data/userPinnedDataTotal')->getBody()->getContents(), true);
+        return json_decode($this->client->get('/data/userPinnedDataTotal')->getBody()->getContents(), true);
     }
 
     function userPinList(): array
     {
-        return json_encode($this->client->get('/data/userPinList')->getBody()->getContents(), true);
+        return json_decode($this->client->get('/data/userPinList')->getBody()->getContents(), true);
     }
 
     private function doCall(string $endpoint, string $method = 'POST', array $params = []): array
