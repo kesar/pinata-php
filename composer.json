@@ -1,0 +1,21 @@
+{
+  "name": "nebulaprotocol/pinata-php",
+  "description": "Pinata.cloud library in PHP",
+  "version": "1.0.0",
+  "require": {
+    "php": ">=7.1",
+    "guzzlehttp/guzzle": "^6.3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "": "src/"
+    }
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Cesar Rodriguez",
+      "email": "kesarr+ipfs@gmail.com"
+    }
+  ]
+}
