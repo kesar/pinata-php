@@ -3,6 +3,7 @@
 namespace Pinata;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 
 class Pinata
 {
@@ -29,14 +30,23 @@ class Pinata
 
     function pinFileToIPFS(string $filePath, array $metadata = null): array
     {
-        return json_decode($this->client->post('/pinning/pinFileToIPFS', [
-            'multipart' => [
+        $options = [
+            RequestOptions::MULTIPART => [
                 [
                     'name'     => 'file',
-                    'contents' => fopen($filePath, 'r')
+                    'contents' => fopen($filePath, 'r'),
                 ],
-            ]
-        ])->getBody()->getContents(), true);
+            ],
+        ];
+        if (!empty($metadata)) {
+            $options[RequestOptions::MULTIPART][] = [
+                'name'     => 'pinataMetadata',
+                'contents' => json_encode($metadata),
+            ];
+        }
+
+        return json_decode($this->client->post('/pinning/pinFileToIPFS', $options)
+            ->getBody()->getContents(), true);
     }
 
     function pinHashToIPFS(string $hashToPin): array
@@ -78,7 +88,7 @@ class Pinata
     {
         $response = $this->client->request($method, $endpoint,
             [
-                \GuzzleHttp\RequestOptions::JSON => $params,
+                RequestOptions::JSON => $params,
             ]
         );
 
