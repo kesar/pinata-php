@@ -13,7 +13,7 @@ class Pinata
     {
         $client = new Client([
                 'base_uri' => 'https://api.pinata.cloud',
-                'headers' => [
+                RequestOptions::HEADERS => [
                     'pinata_api_key' => $apiKey,
                     'pinata_secret_api_key' => $secretKey,
                 ],
