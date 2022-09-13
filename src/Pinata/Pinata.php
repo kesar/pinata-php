@@ -69,9 +69,9 @@ class Pinata
         return json_decode($this->client->get('/data/userPinnedDataTotal')->getBody()->getContents(), true);
     }
 
-    function userPinList(): array
+    function pinList(): array
     {
-        return json_decode($this->client->get('/data/userPinList')->getBody()->getContents(), true);
+        return json_decode($this->client->get('/data/pinList')->getBody()->getContents(), true);
     }
 
     private function doCall(string $endpoint, string $method = 'POST', array $params = []): array
