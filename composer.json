@@ -1,5 +1,5 @@
 {
-  "name": "defro/pinata-php",
+  "name": "nebulaprotocol/pinata-php",
   "description": "Pinata.cloud library in PHP",
   "version": "1.0.0",
   "require": {
