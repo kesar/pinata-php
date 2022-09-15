@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "require": {
     "php": ">=7.1",
-    "guzzlehttp/guzzle": "^6.3.0"
+    "ext-json": "*",
+    "guzzlehttp/guzzle": "^7.5"
   },
   "autoload": {
     "psr-4": {

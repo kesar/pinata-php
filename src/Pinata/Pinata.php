@@ -3,6 +3,7 @@
 namespace Pinata;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 
 class Pinata
 {
@@ -12,7 +13,7 @@ class Pinata
     {
         $client = new Client([
                 'base_uri' => 'https://api.pinata.cloud',
-                'headers' => [
+                RequestOptions::HEADERS => [
                     'pinata_api_key' => $apiKey,
                     'pinata_secret_api_key' => $secretKey,
                 ],
@@ -29,14 +30,23 @@ class Pinata
 
     function pinFileToIPFS(string $filePath, array $metadata = null): array
     {
-        return json_decode($this->client->post('/pinning/pinFileToIPFS', [
-            'multipart' => [
+        $options = [
+            RequestOptions::MULTIPART => [
                 [
                     'name'     => 'file',
-                    'contents' => fopen($filePath, 'r')
+                    'contents' => fopen($filePath, 'r'),
                 ],
-            ]
-        ])->getBody()->getContents(), true);
+            ],
+        ];
+        if (!empty($metadata)) {
+            $options[RequestOptions::MULTIPART][] = [
+                'name'     => 'pinataMetadata',
+                'contents' => json_encode($metadata),
+            ];
+        }
+
+        return json_decode($this->client->post('/pinning/pinFileToIPFS', $options)
+            ->getBody()->getContents(), true);
     }
 
     function pinHashToIPFS(string $hashToPin): array
@@ -69,16 +79,16 @@ class Pinata
         return json_decode($this->client->get('/data/userPinnedDataTotal')->getBody()->getContents(), true);
     }
 
-    function userPinList(): array
+    function pinList(): array
     {
-        return json_decode($this->client->get('/data/userPinList')->getBody()->getContents(), true);
+        return json_decode($this->client->get('/data/pinList')->getBody()->getContents(), true);
     }
 
     private function doCall(string $endpoint, string $method = 'POST', array $params = []): array
     {
         $response = $this->client->request($method, $endpoint,
             [
-                \GuzzleHttp\RequestOptions::JSON => $params,
+                RequestOptions::JSON => $params,
             ]
         );
 
